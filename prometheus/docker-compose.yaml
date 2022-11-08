@@ -1,0 +1,47 @@
+version: "3"
+services:
+  prometheus:
+    image: "prom/prometheus"
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nodeexporter
+    volumes:
+      - ./:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: "grafana/grafana-enterprise"
+    user: "$UID:$GID"
+    depends_on:
+      - prometheus
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+
+  nodeexporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
+    ports:
+      - "9100:9100"
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: forum
+      POSTGRES_USER: forum
+      POSTGRES_PASSWORD: forum
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_postgres:/var/lib/postgresql/data
