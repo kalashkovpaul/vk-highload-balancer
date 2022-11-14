@@ -25,7 +25,7 @@ func main() {
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowCredentials = true
 
-	conn, err := pgx.ParseConnectionString(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", "127.0.0.1", "forum", "forum", "forum", "5432"))
+	conn, err := pgx.ParseConnectionString(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", "<your-main-server-ip>", "forum", "forum", "forum", "5432"))
 
 	db, err := pgx.NewConnPool(pgx.ConnPoolConfig{
 		ConnConfig:     conn,
